@@ -44,6 +44,10 @@ class Comment extends Model
      */
     public function getDisplayAuthorAttribute(): string
     {
-        return $this->is_anonymous ? 'anonymous' : $this->author_name;
+        if ($this->is_anonymous) {
+            return 'Anonymous';
+        }
+        
+        return $this->author_name ?? 'Anonymous';
     }
 }

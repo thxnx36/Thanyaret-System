@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         // เรียกใช้ seeders
         $this->call([
+            UserSeeder::class,
             TopicSeeder::class,
             CommentSeeder::class,
         ]);

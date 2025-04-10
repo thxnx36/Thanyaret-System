@@ -39,10 +39,25 @@ class CommentController extends Controller
         
         try {
             DB::transaction(function () use ($request, $topic) {
+                // กำหนดชื่อผู้เขียน
+                $authorName = null;
+                
+                // ถ้าไม่ได้เลือกไม่ระบุตัวตน
+                if (!($request->is_anonymous ?? false)) {
+                    // ถ้าล็อกอินอยู่ ใช้ชื่อผู้ใช้จากบัญชี
+                    if (auth()->check()) {
+                        $authorName = auth()->user()->name;
+                    } 
+                    // ถ้าไม่ได้ล็อกอิน แต่มีการระบุชื่อมา
+                    else if ($request->filled('author_name')) {
+                        $authorName = $request->author_name;
+                    }
+                }
+                
                 // สร้างความคิดเห็นใหม่
                 $comment = $topic->comments()->create([
                     'content' => $request->content,
-                    'author_name' => $request->is_anonymous ? null : $request->author_name,
+                    'author_name' => $authorName,
                     'is_anonymous' => $request->is_anonymous ?? false,
                 ]);
                 
