@@ -142,4 +142,4 @@ This project is open-source, developed by Thanyaret.
 
 ---
 
-Developed with ❤️ by Thanyaret Team
+Developed with ❤️ by Thanyaret Seangsrichan
