@@ -26,6 +26,12 @@
             scroll-behavior: smooth;
         }
         
+        /* ควบคุม z-index และตำแหน่งของปุ่มและเมนู */
+        .topic-button {
+            position: relative;
+            z-index: 10; /* ลด z-index ลงเพื่อไม่ให้บังส่วนอื่น */
+        }
+        
         .flash-message {
             transition: opacity 1s ease-in-out;
         }
@@ -109,23 +115,55 @@
         }
 
         .nav-dropdown-content {
-            display: none;
+            display: none; /* ค่าเริ่มต้นคือซ่อน */
             position: absolute;
             background-color: white;
             min-width: 220px;
             box-shadow: 0 8px 16px 0 rgba(0,0,0,0.15);
-            z-index: 9999;
+            z-index: 1000; /* ลด z-index ลงจาก 9999 เพื่อให้เหมาะสมกับลำดับชั้น */
             border-radius: 8px;
             top: 100%;
-            left: 0;
+            right: 0;
             margin-top: 12px;
             overflow: hidden;
         }
-
-        .nav-dropdown:hover .nav-dropdown-content {
-            display: block;
+        
+        /* เพิ่ม CSS เฉพาะสำหรับเมนู Topic */
+        .nav-dropdown.topic-dropdown .nav-dropdown-content {
+            left: 0;
+            right: auto;
+        }
+        
+        /* Style สำหรับ form ที่อยู่ใน dropdown เพื่อป้องกันการซ้อนทับกัน */
+        .nav-dropdown-content form {
+            position: static;
+            width: 100%;
+        }
+        
+        .nav-dropdown-content form .dropdown-item {
+            width: 100%;
         }
 
+        /* Up arrow */
+        .nav-dropdown-content::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: 24px;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            transform: rotate(45deg);
+            border-left: 1px solid rgba(0, 0, 0, 0.05);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        /* เพิ่ม CSS เฉพาะสำหรับลูกศรของเมนู Topic */
+        .nav-dropdown.topic-dropdown .nav-dropdown-content::before {
+            left: 24px;
+            right: auto;
+        }
+        
         .dropdown-item {
             color: #333;
             padding: 12px 16px;
@@ -136,20 +174,6 @@
 
         .dropdown-item:hover {
             background-color: #f9f9f9;
-        }
-
-        /* Up arrow */
-        .nav-dropdown-content::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 24px;
-            width: 16px;
-            height: 16px;
-            background-color: white;
-            transform: rotate(45deg);
-            border-left: 1px solid rgba(0, 0, 0, 0.05);
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         /* Improved styles for mobile menu */
@@ -214,8 +238,8 @@
                     </a>
                     
                     @auth
-                        <div class="nav-dropdown">
-                            <a href="#" class="nav-item text-lg hover:text-gray-200 flex items-center">
+                        <div class="nav-dropdown topic-dropdown">
+                            <a href="#" class="nav-item text-lg hover:text-gray-200 flex items-center dropdown-toggle">
                                 <i class="fas fa-th-large mr-1"></i> Manage Topic <i class="fas fa-chevron-down ml-1 text-sm"></i>
                             </a>
                             <div class="nav-dropdown-content">
@@ -233,7 +257,7 @@
                         
                         <!-- Dropdown for user -->
                         <div class="nav-dropdown">
-                            <a href="#" class="nav-item text-lg hover:text-gray-200 flex items-center">
+                            <a href="#" class="nav-item text-lg hover:text-gray-200 flex items-center dropdown-toggle">
                                 <i class="fas fa-user-circle mr-1"></i> {{ Auth::user()->name }} <i class="fas fa-chevron-down ml-1 text-sm"></i>
                             </a>
                             <div class="nav-dropdown-content">
@@ -394,6 +418,49 @@
                     const submenu = this.nextElementSibling;
                     submenu.classList.toggle('open');
                     this.classList.toggle('active');
+                });
+            });
+            
+            // แก้ไขปัญหา dropdown ซ้อนทับกัน
+            // ทำให้ dropdown แสดงเมื่อคลิกแทนที่จะ hover เพื่อป้องกันการซ้อนทับ
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            const dropdownContents = document.querySelectorAll('.nav-dropdown-content');
+            
+            // เมื่อคลิกที่ dropdown toggle
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const content = this.nextElementSibling;
+                    
+                    // ปิด dropdown อื่นๆ ที่อาจเปิดอยู่
+                    dropdownContents.forEach(item => {
+                        if (item !== content) {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    // Toggle dropdown ที่คลิก
+                    if (content.style.display === 'block') {
+                        content.style.display = 'none';
+                    } else {
+                        content.style.display = 'block';
+                    }
+                });
+            });
+            
+            // เมื่อคลิกที่พื้นที่อื่นๆ ของหน้าจอ ให้ปิด dropdown ทั้งหมด
+            document.addEventListener('click', function() {
+                dropdownContents.forEach(content => {
+                    content.style.display = 'none';
+                });
+            });
+            
+            // ป้องกันการปิด dropdown เมื่อคลิกที่เนื้อหาภายใน dropdown
+            dropdownContents.forEach(content => {
+                content.addEventListener('click', function(e) {
+                    e.stopPropagation();
                 });
             });
             

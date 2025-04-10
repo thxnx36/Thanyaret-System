@@ -6,6 +6,13 @@
 
 An elegant internal communication system designed to help employees from different departments share ideas and exchange information through a public discussion board. The platform supports anonymous posting and various sorting options for discussions.
 
+## ⚠️ ADMIN LOGIN INFORMATION ⚠️
+
+```
+Email: admin@example.com
+Password: password
+```
+
 ## ✨ Key Features
 
 - 📝 Create new discussion topics to communicate with other employees
@@ -26,6 +33,8 @@ An elegant internal communication system designed to help employees from differe
 - Node.js and NPM (for frontend assets)
 
 ## 📦 Installation
+
+Follow these steps to run the application:
 
 1. Clone this repository to your machine:
 
@@ -52,37 +61,67 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-5. Set up SQLite database (or your preferred database):
+5. **Database Setup (Already Done!)**: 
+   The project includes a pre-configured SQLite database with sample data. You don't need to create or seed the database!
 
-For SQLite:
-```bash
-touch database/database.sqlite
-```
+   Just make sure your `.env` file has:
+   ```
+   DB_CONNECTION=sqlite
+   # Make sure other DB_* lines are commented out
+   ```
 
-And update your .env file:
-```
-DB_CONNECTION=sqlite
-```
-
-6. Run migrations to create database tables:
-
-```bash
-php artisan migrate
-```
-
-7. (Optional) Seed the database with sample data:
-
-```bash
-php artisan db:seed
-```
-
-8. Start the development server:
+6. Start the development server:
 
 ```bash
 php artisan serve
 ```
 
 Access the application at http://localhost:8000
+
+## ⚠️ Important Setup Notes
+
+- **Database already included!** The project comes with a ready-to-use SQLite database filled with sample data.
+- If you want to reset the database to its original state, run:
+  ```bash
+  php artisan migrate:fresh --seed
+  ```
+- If you encounter any permission issues with the included SQLite database, ensure the 'database' directory is writable.
+
+## 👤 Ready-to-Use Accounts
+
+The included database comes with these pre-configured accounts:
+
+**Admin Account: (ใช้สำหรับเข้าถึงหน้า Admin Dashboard)**
+- Email: admin@example.com
+- Password: password
+- URL สำหรับเข้าสู่หน้า Admin: [http://localhost:8000/admin/dashboard](http://localhost:8000/admin/dashboard)
+
+**Test User Accounts: (ใช้สำหรับทดสอบระบบทั่วไป)**
+- john@example.com / password
+- jane@example.com / password
+- bob@example.com / password
+- sarah@example.com / password
+
+## 🔧 Troubleshooting
+
+If you encounter issues during installation or runtime:
+
+1. **Database connection problems**:
+   - Ensure your `.env` file has the correct database settings
+   - The included SQLite database should work out of the box
+
+2. **Missing data or blank pages**:
+   - Check Laravel logs at `storage/logs/laravel.log`
+   - Ensure all dependencies were installed correctly
+   - Run `php artisan config:clear` and `php artisan cache:clear`
+
+3. **Missing assets**:
+   - The project uses compiled assets that should work out of the box
+   - If needed, run `npm install && npm run dev` to rebuild assets
+
+4. **Admin Dashboard เข้าไม่ได้**:
+   - ถ้าเจอข้อผิดพลาด "Target class [admin] does not exist" ให้ตรวจสอบว่าได้ลงทะเบียน middleware 'admin' ในไฟล์ bootstrap/app.php อย่างถูกต้องแล้ว
+   - ตรวจสอบว่าใช้ข้อมูลเข้าสู่ระบบด้วยบัญชี admin@example.com / password อย่างถูกต้อง
 
 ## 🖥️ Application Structure
 
@@ -91,13 +130,6 @@ Access the application at http://localhost:8000
 3. **Topic Details** - Page showing topic details and all comments with a form to add new comments
 4. **User Authentication** - Registration and login pages
 5. **Admin Area** - Administrative dashboard for system management
-
-## 👤 Default Admin Account
-
-After seeding the database, you can log in with these credentials:
-
-- Email: admin@example.com
-- Password: password
 
 ## 🧩 Interface Preview
 
